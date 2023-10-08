@@ -1,4 +1,4 @@
-package com.azizkale.mockitotutorial.EmployeeRepositoryTests;
+package com.azizkale.mockitotutorial.repository;
 
 import com.azizkale.mockitotutorial.dao.EmployeeRepository;
 import com.azizkale.mockitotutorial.model.Employee;
