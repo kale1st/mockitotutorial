@@ -15,8 +15,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.awt.print.Pageable;
 import java.util.Date;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,10 +59,12 @@ public class EmployeeServiceTest {
 
     @Test
     public void EmployeeService_GetAllEmployee_ReturnsResponseDto(){
-        EmployeeResponse employeeResponse = Mockito.mock(EmployeeResponse.class);
-
         Page<Employee> employees = Mockito.mock(Page.class);
 
-        when(employeeRepository.findAll(Mockito.any(Pageable.class)))
+        when(employeeRepository.findAll(Mockito.any(Pageable.class))).thenReturn(employees);
+
+        EmployeeResponse saveEmployee = employeeService.findAll(1,10);
+
+        Assertions.assertThat(saveEmployee).isNotNull();
     }
 }
