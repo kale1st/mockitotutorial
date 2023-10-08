@@ -2,6 +2,7 @@ package com.azizkale.mockitotutorial.service;
 
 import com.azizkale.mockitotutorial.dao.EmployeeRepository;
 import com.azizkale.mockitotutorial.dto.EmployeeDto;
+import com.azizkale.mockitotutorial.dto.EmployeeResponse;
 import com.azizkale.mockitotutorial.model.Employee;
 import org.assertj.core.api.Assertions;
 
@@ -13,7 +14,9 @@ import static org.mockito.Mockito.when;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 
+import java.awt.print.Pageable;
 import java.util.Date;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,5 +55,14 @@ public class EmployeeServiceTest {
 
         // Using AssertJ to check the correctness of the expected values.
         Assertions.assertThat(savedEmployee).isNotNull();
+    }
+
+    @Test
+    public void EmployeeService_GetAllEmployee_ReturnsResponseDto(){
+        EmployeeResponse employeeResponse = Mockito.mock(EmployeeResponse.class);
+
+        Page<Employee> employees = Mockito.mock(Page.class);
+
+        when(employeeRepository.findAll(Mockito.any(Pageable.class)))
     }
 }
