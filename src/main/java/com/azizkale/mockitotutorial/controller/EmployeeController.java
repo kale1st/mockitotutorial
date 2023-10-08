@@ -1,6 +1,7 @@
 package com.azizkale.mockitotutorial.controller;
 
 import com.azizkale.mockitotutorial.dto.EmployeeDto;
+import com.azizkale.mockitotutorial.dto.EmployeeResponse;
 import com.azizkale.mockitotutorial.exception.EmployeeNotFoundException;
 import com.azizkale.mockitotutorial.exception.InternalServerException;
 import com.azizkale.mockitotutorial.model.Employee;
@@ -23,9 +24,11 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @GetMapping("/employee")
-    public ResponseEntity<List<Employee>> get(){
-        List<Employee> employees = employeeService.findAll();
-        return ResponseEntity.ok(employees);
+    public ResponseEntity<EmployeeResponse> getEmployees(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+    ) {
+        return new ResponseEntity<>(employeeService.findAll(pageNo, pageSize), HttpStatus.OK);
     }
 
     @GetMapping("/employee/{id}")
