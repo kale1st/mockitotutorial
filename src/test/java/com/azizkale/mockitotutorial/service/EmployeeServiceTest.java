@@ -57,14 +57,19 @@ public class EmployeeServiceTest {
         Assertions.assertThat(savedEmployee).isNotNull();
     }
 
-    @Test
-    public void EmployeeService_GetAllEmployee_ReturnsResponseDto(){
-        Page<Employee> employees = Mockito.mock(Page.class);
+   @Test
+public void EmployeeService_GetAllEmployee_ReturnsResponseDto(){
+    // Mocking a Page<Employee> using Mockito
+    Page<Employee> employees = Mockito.mock(Page.class);
 
-        when(employeeRepository.findAll(Mockito.any(Pageable.class))).thenReturn(employees);
+    // Configuring the behavior of the employeeRepository mock
+    // When findAll method of employeeRepository is called with any Pageable, it should return the mocked Page<Employee>.
+    when(employeeRepository.findAll(Mockito.any(Pageable.class))).thenReturn(employees);
 
-        EmployeeResponse saveEmployee = employeeService.findAll(1,10);
+   // Calling the findAll method of employeeService with page number 1 and page size 10
+    EmployeeResponse employeeResponse = employeeService.findAll(1, 10);
 
-        Assertions.assertThat(saveEmployee).isNotNull();
-    }
+    // Asserting that the result (saveEmployee) is not null
+    Assertions.assertThat(employeeResponse).isNotNull();
+}
 }
