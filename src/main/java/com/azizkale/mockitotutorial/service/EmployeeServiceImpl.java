@@ -79,7 +79,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     }
 
-    private EmployeeDto mapToDto(Employee employee) {
+    public EmployeeDto mapToDto(Employee employee) {
         EmployeeDto employeeDto = new EmployeeDto();
         employeeDto.setId(employee.getId());
         employeeDto.setName(employee.getName());
