@@ -1,0 +1,1 @@
+The relevant article for this project is located at the following link: https://github.com/kale1st/mockitotutorial.git.
