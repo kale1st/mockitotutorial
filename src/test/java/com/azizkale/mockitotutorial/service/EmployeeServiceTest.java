@@ -89,6 +89,19 @@ public class EmployeeServiceTest {
 
 
     @Test
+    public void EmployeeService_GetEmployeeById_WhenEmployeeExistsButIsNull_ReturnsOptionalEmpty() {
+        // Arrange
+        int employeeId = 1;
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.ofNullable(null));
+
+        // Act
+        Optional<Employee> result = employeeService.findById(employeeId);
+
+        // Assert
+        assertFalse(result.isPresent());
+    }
+
+    @Test
     public void EmployeeService_GetEmployeeById_WhenEmployeeNotExist_ReturnsOptionalEmpty(){
         // Arrange
         int employeeId = 2;
