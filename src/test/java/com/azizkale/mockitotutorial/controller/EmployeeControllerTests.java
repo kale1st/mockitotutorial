@@ -27,9 +27,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = EmployeeController.class)
-@AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 public class EmployeeControllerTests {
 
@@ -62,9 +63,9 @@ public class EmployeeControllerTests {
                 .content(objectMapper.writeValueAsString(employeeDto)));
 
         // Asserting the response expectations
-        response.andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name", CoreMatchers.is(employeeDto.getName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.department", CoreMatchers.is(employeeDto.getDepartment())));
+        response.andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name", CoreMatchers.is(employeeDto.getName())))
+                .andExpect(jsonPath("$.department", CoreMatchers.is(employeeDto.getDepartment())));
     }
 
     @Test
@@ -82,12 +83,12 @@ public class EmployeeControllerTests {
                 .param("pageSize", "10"));
 
         // Asserting the response expectations
-        response.andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content.size()", CoreMatchers.is(responseDto.getContent().size())));
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.size()", CoreMatchers.is(responseDto.getContent().size())));
     }
 
     @Test
-    public void EmployeeController_FindEmployeeById_ReturnEmployeeDto() throws Exception {
+    public void EmployeeController_FindEmployeeById() throws Exception {
         // Define the employee ID for the test
         int employeeId = 1;
 
@@ -100,25 +101,56 @@ public class EmployeeControllerTests {
                 .content(objectMapper.writeValueAsString(employee)));
 
         // Asserting the response expectations
-        response.andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name", CoreMatchers.is(employee.getName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.department", CoreMatchers.is(employee.getDepartment())));
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", CoreMatchers.is(employee.getName())))
+                .andExpect(jsonPath("$.department", CoreMatchers.is(employee.getDepartment())));
+    }
+
+    @Test
+    public void EmployeeController_FindEmployeeById_WhenEmployeeExistsButIsNull() throws Exception {
+        // Define the employee ID for the test
+        int employeeId = 1;
+
+        // Mocking the service behavior to return an Optional containing a specific Employee instance
+        when(employeeService.findById(employeeId)).thenReturn(Optional.of(employee));
+
+        // Performing an HTTP GET request to retrieve an employee by ID
+        ResultActions response = mockMvc.perform(get("/api/employee/1")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // Asserting the response expectations
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").doesNotExist())
+                .andExpect(jsonPath("$.department").doesNotExist());
+    }
+
+    @Test
+    public void EmployeeController_FindEmployeeById_WhenEmployeeDoesNotExist() throws Exception {
+        // Define the employee ID for the test
+        int employeeId = 1;
+
+        // Mock the service behavior to return an empty Optional when findById is called with the given ID
+        when(employeeService.findById(employeeId)).thenReturn(Optional.empty());
+
+        // Perform an HTTP GET request to retrieve an employee by ID
+        mockMvc.perform(get("/employee/{id}", employeeId))
+                .andExpect(status().isNotFound()); // Expecting a 404 Not Found status, as the employee is not found
     }
 
     @Test
     public void EmployeeController_UpdateEmployee_ReturnEmployeeDto() throws Exception {
         int employeeId = 1;
 
-        // Mocking the service behavior
+// Mocking the service behavior
         when(employeeService.update(employeeDto, employeeId)).thenReturn(employeeDto);
 
-        // Performing an HTTP PUT request to update an employee
+// Performing an HTTP PUT request to update an employee
         ResultActions response = mockMvc.perform(put("/api/employee")
                 .param("id", String.valueOf(employeeId))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(employeeDto)));
 
-        // Asserting the response expectations
+// Asserting the response expectations
         response.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name", CoreMatchers.is(employeeDto.getName())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.department", CoreMatchers.is(employeeDto.getDepartment())));
